@@ -127,11 +127,17 @@ mail.addEventListener('click',()=>{
     setTimeout(()=>{mail.textContent=o;},1000);
   });
 });
-// 访问数（本地记录）
-const vk='namegit_visits';
-let vn=parseInt(localStorage.getItem(vk))||0;
-vn++;localStorage.setItem(vk,vn);
-document.getElementById('visits').textContent='👁 访问 '+vn;
+// 访问数（全网真实访问量：Abacus 免费计数服务，所有访客共用计数器）
+const visitsEl=document.getElementById('visits'),vk='namegit_visits';
+const localFallback=()=>{
+  let vn=parseInt(localStorage.getItem(vk))||0;
+  vn++;localStorage.setItem(vk,vn);
+  visitsEl.textContent='👁 访问 '+vn;
+};
+fetch('https://abacus.jasoncameron.dev/hit/namegit-site/visits')
+  .then(r=>r.json())
+  .then(d=>{visitsEl.textContent='👁 访问 '+d.value;})
+  .catch(localFallback);
 // 回到顶部
 const tb=document.getElementById('top-btn');
 addEventListener('scroll',()=>{tb.style.display=scrollY>400?'block':'none';});
